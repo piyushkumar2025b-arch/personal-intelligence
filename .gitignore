@@ -1,0 +1,24 @@
+# Environment
+.env
+
+# Local zero-docker data directory (SQLite, embedded Qdrant)
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Pytest & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
