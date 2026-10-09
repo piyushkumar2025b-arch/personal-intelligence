@@ -123,6 +123,34 @@ Building this system from scratch was a deep dive into production-grade AI syste
 - 🛡️ **Resilient Offline Fallbacks**: If Neo4j or Redis is offline, the retriever smoothly proceeds with Vector + BM25 search without error.
 - 📓 **1-Click Google Colab Runner**: Test and run the full pipeline in Google Colab with GPU-accelerated reranking in under 2 minutes.
 
+## 🗺️ Visual Architecture & Workflow Diagrams
+
+### 📍 1. Present Workflow Architecture
+> **Zero-Docker Tri-Hybrid RAG • Embedded Local Storage • OpenRouter Free Tier**
+
+![Present Workflow Architecture Diagram](assets/present_workflow_diagram.png)
+
+<details>
+<summary>🎨 View Concept Infographic Artwork</summary>
+
+![Present Architecture Visual](assets/present_workflow_visual.jpg)
+
+</details>
+
+---
+
+### 🔮 2. Future Autonomous Cognitive Twin Architecture
+> **Universal Ingestion • Contextual Chunking • Autonomous Knowledge Graph • Continuous RAGAS Evals**
+
+![Future Workflow Architecture Diagram](assets/future_workflow_diagram.png)
+
+<details>
+<summary>🎨 View Future Cognitive Twin Artwork</summary>
+
+![Future Architecture Visual](assets/future_workflow_visual.jpg)
+
+</details>
+
 ---
 
 ## 🔄 End-to-End Workflow
