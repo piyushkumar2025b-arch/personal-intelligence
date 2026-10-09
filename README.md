@@ -158,7 +158,7 @@ Building this system from scratch was a deep dive into production-grade AI syste
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User
+    actor User as User
     participant Ingest as Ingestion Pipeline
     participant DB as SQLite DB
     participant Qdrant as Qdrant Vector DB
@@ -166,27 +166,29 @@ sequenceDiagram
     participant Reranker as Cross-Encoder
     participant LLM as OpenRouter LLM
 
-    Note over User, DB: 1. Ingestion Phase
-    User->>Ingest: Ingest Document (Markdown / Text / PDF)
-    Ingest->>Ingest: Split text into overlapping token windows
-    Ingest->>LLM: Embed text batches (text-embedding-3-small)
-    LLM-->>Ingest: Return 1536-dim embeddings
-    Ingest->>DB: Store raw chunks & doc metadata
-    Ingest->>Qdrant: Upsert vectors & chunk IDs
+    Note over User,DB: Phase 1: Document Ingestion
+    User->>Ingest: Submit Document (Markdown, PDF, Text)
+    Ingest->>Ingest: Token Window Chunking (512 tokens, 64 overlap)
+    Ingest->>LLM: Request 1536-dim Embeddings
+    LLM-->>Ingest: Return Dense Vectors
+    Ingest->>DB: Store Raw Chunks and Metadata
+    Ingest->>Qdrant: Upsert Vectors and Point IDs
 
-    Note over User, LLM: 2. Retrieval & Answering Phase
-    User->>Retriever: Query: "How does embedded storage work?"
-    par Concurrent Fetch
-        Retriever->>Qdrant: Dense Semantic Search (Top 20)
-        Retriever->>Retriever: BM25 Keyword Search (Top 20)
-        Retriever->>Retriever: Graph Entity Lookup (Top 20)
+    Note over User,LLM: Phase 2: Hybrid Retrieval and Synthesis
+    User->>Retriever: Ask Question
+    par Dense Semantic Search
+        Retriever->>Qdrant: Fetch Top-20 Vector Nearest Neighbors
+    and Sparse Lexical Match
+        Retriever->>Retriever: Fetch Top-20 BM25 Keyword Hits
+    and Topological Graph Search
+        Retriever->>Retriever: Fetch Top-20 Neo4j Entity Connected Chunks
     end
-    Retriever->>Retriever: Reciprocal Rank Fusion (RRF)
-    Retriever->>DB: Hydrate chunk text from SQLite
-    Retriever->>Reranker: Cross-encode query + chunks
-    Reranker-->>Retriever: Reranked top-k highest precision chunks
-    Retriever->>LLM: Prompt + Context (NVIDIA Nemotron 120B Free)
-    LLM-->>User: Synthesized, accurate response with zero hallucination
+    Retriever->>Retriever: Reciprocal Rank Fusion (RRF Score Aggregation)
+    Retriever->>DB: Hydrate Full Text for Top Chunk IDs
+    Retriever->>Reranker: Joint Cross-Attention Scoring
+    Reranker-->>Retriever: Return Top-5 Re-ordered Chunks
+    Retriever->>LLM: Send Grounded Context + Question (Nemotron 120B)
+    LLM-->>User: Return Truthful Answer with Inline Citations
 ```
 
 ### Ingestion Walkthrough
